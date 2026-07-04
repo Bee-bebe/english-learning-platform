@@ -7,11 +7,11 @@
         body { font-family: 'Sarabun', sans-serif; background: #f4f7f6; padding: 20px; }
         .container { max-width: 900px; margin: auto; }
         .search-bar { width: 100%; padding: 15px; border-radius: 25px; border: 1px solid #ddd; margin-bottom: 20px; box-sizing: border-box; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 10px; }
-        .tab-btn { padding: 10px 20px; cursor: pointer; border-radius: 20px; border: none; background: #ddd; white-space: nowrap; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; overflow-x: auto; }
+        .tab-btn { padding: 10px 20px; cursor: pointer; border-radius: 20px; border: none; background: #ddd; }
         .tab-btn.active { background: #0984e3; color: white; }
-        .card { background: white; padding: 20px; margin-bottom: 15px; border-radius: 12px; border-left: 5px solid #0984e3; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .speaker-btn { cursor: pointer; background: #0984e3; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; margin-left: 10px; font-size: 16px; }
+        .card { background: white; padding: 20px; margin-bottom: 15px; border-radius: 12px; border-left: 5px solid #0984e3; }
+        .speaker-btn { cursor: pointer; background: #0984e3; color: white; border: none; border-radius: 50%; width: 35px; height: 35px; margin-left: 10px; }
     </style>
 </head>
 <body>
@@ -19,7 +19,7 @@
 <div class="container">
     <h1>English Everyday Learning</h1>
     <div class="tabs" id="tabContainer"></div>
-    <input type="text" id="searchInput" class="search-bar" placeholder="🔍 ค้นหาคำศัพท์, ประโยค, หรือเนื้อหา..." onkeyup="renderData()">
+    <input type="text" id="searchInput" class="search-bar" placeholder="🔍 ค้นหาข้อมูล..." onkeyup="renderData()">
     <div id="contentDisplay"></div>
 </div>
 
@@ -36,26 +36,20 @@
     let allData = {};
     let activeTab = 'Stories';
 
-    function playVoice(text) {
-        window.speechSynthesis.cancel(); // หยุดเสียงเก่าก่อนเริ่มใหม่
-        const msg = new SpeechSynthesisUtterance(text);
-        msg.lang = 'en-GB'; 
-        msg.rate = 0.8; 
-        window.speechSynthesis.speak(msg);
-    }
-
     async function init() {
         for (const [key, url] of Object.entries(sheetURLs)) {
-            const res = await fetch(url);
-            const csv = await res.text();
-            const lines = csv.split("\n");
-            const headers = lines[0].split(",").map(h => h.trim());
-            allData[key] = lines.slice(1).filter(line => line.trim() !== "").map(line => {
-                const values = line.split(",");
-                let obj = {};
-                headers.forEach((h, i) => obj[h] = values[i] ? values[i].trim() : "");
-                return obj;
-            });
+            try {
+                const res = await fetch(url);
+                const csv = await res.text();
+                const lines = csv.split("\n");
+                const headers = lines[0].split(",").map(h => h.trim());
+                allData[key] = lines.slice(1).filter(l => l.trim()).map(line => {
+                    const vals = line.split(",");
+                    let obj = {};
+                    headers.forEach((h, i) => obj[h] = vals[i] ? vals[i].trim() : "");
+                    return obj;
+                });
+            } catch (e) { console.error("Error loading " + key, e); }
         }
         createTabs();
         renderData();
@@ -64,37 +58,43 @@
     function createTabs() {
         const container = document.getElementById('tabContainer');
         Object.keys(allData).forEach(key => {
-            container.innerHTML += `<button class="speaker-btn" onclick="playVoice(decodeURIComponent('${encodeURIComponent(textToSpeak)}'))">🔊</button>`;
+            container.innerHTML += `<button class="tab-btn ${key === activeTab ? 'active' : ''}" onclick="switchTab('${key}')">${key}</button>`;
         });
     }
 
     function switchTab(key) {
         activeTab = key;
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.innerText === key));
-        document.getElementById('searchInput').value = ""; // เคลียร์ช่องค้นหา
         renderData();
+    }
+
+    function playVoice(text) {
+        const msg = new SpeechSynthesisUtterance(text || "No content to read");
+        msg.lang = 'en-GB';
+        msg.rate = 0.8;
+        window.speechSynthesis.speak(msg);
     }
 
     function renderData() {
         const q = document.getElementById('searchInput').value.toLowerCase();
         const display = document.getElementById('contentDisplay');
-        const data = allData[activeTab].filter(item => Object.values(item).some(val => val.toLowerCase().includes(q)));
+        const data = (allData[activeTab] || []).filter(item => 
+            Object.values(item).some(val => val.toLowerCase().includes(q))
+        );
         
         display.innerHTML = data.map(item => {
-            // ดึงข้อความมาอ่าน (รวมคอลัมน์ที่ 2 และ 3 หรือ 4 ถ้ามี)
-            const values = Object.values(item);
-            const textToSpeak = values.slice(1, 4).join(". "); 
-            const title = values[1] || "ไม่มีหัวข้อ";
-            const content = values[2] || "";
-
+            const vals = Object.values(item);
+            const title = vals[1] || "รายการ";
+            const desc = vals[2] || "";
+            // ส่งค่าข้อความแบบปลอดภัย
+            const textToSpeak = vals.slice(1).join(". ").replace(/"/g, '\"').replace(/'/g, "\\'");
+            
             return `
             <div class="card">
-                <h3>${title} 
-                    <button class="speaker-btn" onclick="playVoice('${textToSpeak.replace(/'/g, "\\'")}')">🔊</button>
-                </h3>
-                <p>${content}</p>
-            </div>
-        `}).join('');
+                <h3>${title} <button class="speaker-btn" onclick="playVoice('${textToSpeak}')">🔊</button></h3>
+                <p>${desc}</p>
+            </div>`;
+        }).join('');
     }
 
     init();
