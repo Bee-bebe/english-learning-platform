@@ -64,7 +64,7 @@
     function createTabs() {
         const container = document.getElementById('tabContainer');
         Object.keys(allData).forEach(key => {
-            container.innerHTML += `<button class="tab-btn ${key === activeTab ? 'active' : ''}" onclick="switchTab('${key}')">${key}</button>`;
+            container.innerHTML += `<button class="speaker-btn" onclick="playVoice(decodeURIComponent('${encodeURIComponent(textToSpeak)}'))">🔊</button>`;
         });
     }
 
