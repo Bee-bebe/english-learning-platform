@@ -6,97 +6,32 @@
     <title>English Everyday Learning</title>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #0984e3;
-            --accent: #00b894;
-        }
+        :root { --primary: #0984e3; --accent: #00b894; }
         body { 
             font-family: 'Sarabun', sans-serif; 
             background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%); 
-            padding: 20px; 
-            margin: 0; 
-            color: #2d3436;
+            padding: 20px; margin: 0; color: #2d3436;
         }
         .container { max-width: 1200px; margin: auto; }
-        h1 { 
-            text-align: center; 
-            color: var(--primary); 
-            margin-bottom: 10px; 
-        }
-        .subtitle { text-align: center; color: #636e72; margin-bottom: 30px; }
+        h1 { text-align: center; color: var(--primary); margin-bottom: 8px; }
+        .subtitle { text-align: center; color: #636e72; margin-bottom: 25px; }
 
-        .search-bar { 
-            width: 100%; 
-            padding: 16px 20px; 
-            border-radius: 50px; 
-            border: 2px solid #dfe6e9; 
-            font-size: 16px; 
-            margin-bottom: 25px;
-        }
-        .search-bar:focus { outline: none; border-color: var(--primary); }
-
-        .tabs { 
-            display: flex; 
-            gap: 12px; 
-            margin-bottom: 25px; 
-            overflow-x: auto; 
-            padding-bottom: 10px;
-        }
-        .tab-btn { 
-            padding: 12px 24px; 
-            cursor: pointer; 
-            border-radius: 30px; 
-            border: none; 
-            background: white; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            white-space: nowrap;
-            transition: all 0.3s;
-        }
-        .tab-btn.active { 
-            background: var(--primary); 
-            color: white; 
-            box-shadow: 0 4px 12px rgba(9,132,227,0.3);
-        }
+        .search-bar { width: 100%; padding: 16px 20px; border-radius: 50px; border: 2px solid #dfe6e9; font-size: 16px; margin-bottom: 20px; }
+        .tabs { display: flex; gap: 12px; margin-bottom: 25px; overflow-x: auto; padding-bottom: 10px; }
+        .tab-btn { padding: 12px 24px; cursor: pointer; border-radius: 30px; border: none; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .tab-btn.active { background: var(--primary); color: white; }
 
         .card { 
-            background: white; 
-            padding: 24px; 
-            margin-bottom: 20px; 
-            border-radius: 16px; 
+            background: white; padding: 24px; margin-bottom: 20px; border-radius: 16px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            transition: transform 0.2s;
         }
-        .card:hover { transform: translateY(-4px); }
-
         .speaker-btn { 
-            cursor: pointer; 
-            background: var(--accent); 
-            color: white; 
-            border: none; 
-            border-radius: 50%; 
-            width: 45px; 
-            height: 45px; 
-            font-size: 20px; 
-            float: right;
+            cursor: pointer; background: var(--accent); color: white; border: none; 
+            border-radius: 50%; width: 45px; height: 45px; font-size: 20px; float: right;
         }
-
-        .en { font-size: 16.8px; line-height: 1.75; margin: 12px 0; }
-        .thai { color: #d63031; font-size: 15.8px; line-height: 1.65; margin-top: 10px; }
-        .meta { font-size: 14.5px; color: #636e72; margin-top: 12px; }
-
-        .speed-control {
-            margin: 15px 0;
-            text-align: center;
-        }
-        .speed-btn {
-            padding: 6px 14px;
-            margin: 0 5px;
-            border: 1px solid #ddd;
-            border-radius: 20px;
-            background: white;
-            cursor: pointer;
-        }
-        .speed-btn.active { background: var(--primary); color: white; }
+        .title { font-size: 20px; font-weight: 600; margin-bottom: 12px; }
+        .en { font-size: 16.8px; line-height: 1.75; }
+        .thai { font-size: 16px; line-height: 1.7; color: #d63031; background: #fff5f5; padding: 12px; border-radius: 8px; margin-top: 12px; border-left: 4px solid #ff7675; }
     </style>
 </head>
 <body>
@@ -105,13 +40,13 @@
     <p class="subtitle">ฝึกภาษาอังกฤษผ่านเรื่องสั้น คำศัพท์ และโครงสร้างประโยค</p>
 
     <div class="tabs" id="tabContainer"></div>
-    <input type="text" id="searchInput" class="search-bar" placeholder="🔍 ค้นหาเรื่องสั้น, คำศัพท์, วลี..." onkeyup="renderData()">
+    <input type="text" id="searchInput" class="search-bar" placeholder="🔍 ค้นหา..." onkeyup="renderData()">
 
-    <div class="speed-control">
+    <div style="text-align:center; margin:15px 0;">
         ความเร็วเสียง: 
-        <button class="speed-btn active" onclick="setSpeed(0.7)">ช้า</button>
-        <button class="speed-btn" onclick="setSpeed(0.9)">ปกติ</button>
-        <button class="speed-btn" onclick="setSpeed(1.2)">เร็ว</button>
+        <button onclick="setSpeed(0.7)" style="padding:6px 16px;border-radius:20px;background:#0984e3;color:white;margin:0 5px;">ช้า</button>
+        <button onclick="setSpeed(0.9)" style="padding:6px 16px;border-radius:20px;background:white;margin:0 5px;">ปกติ</button>
+        <button onclick="setSpeed(1.2)" style="padding:6px 16px;border-radius:20px;background:white;margin:0 5px;">เร็ว</button>
     </div>
 
     <div id="contentDisplay"></div>
@@ -131,15 +66,7 @@
     let activeTab = 'Stories';
     let currentSpeed = 0.8;
 
-    function setSpeed(speed) {
-        currentSpeed = speed;
-        document.querySelectorAll('.speed-btn').forEach(btn => {
-            btn.classList.toggle('active', parseFloat(btn.textContent) === speed || 
-                (speed === 0.7 && btn.textContent === 'ช้า') ||
-                (speed === 0.9 && btn.textContent === 'ปกติ') ||
-                (speed === 1.2 && btn.textContent === 'เร็ว'));
-        });
-    }
+    function setSpeed(speed) { currentSpeed = speed; }
 
     function playVoice(text) {
         window.speechSynthesis.cancel();
@@ -161,13 +88,13 @@
                     headers.forEach((h, i) => obj[h] = row[i] || '');
                     return obj;
                 });
-            } catch(e) {}
+            } catch(e) { console.error("Load error", key); }
         }
         createTabs();
         renderData();
     }
 
-    function createTabs() { /* คงเดิม (เหมือนเวอร์ชันก่อนหน้า) */ 
+    function createTabs() {
         const container = document.getElementById('tabContainer');
         container.innerHTML = Object.keys(allData).map(key => `
             <button class="tab-btn ${key === activeTab ? 'active' : ''}" data-tab="${key}" onclick="switchTab('${key}')">
@@ -190,26 +117,27 @@
         const container = document.getElementById('contentDisplay');
         let html = '';
 
-        (allData[activeTab] || []).filter(item => 
-            Object.values(item).some(val => String(val).toLowerCase().includes(q))
-        ).forEach(item => {
-            const title = item.Title_EN || item.word || item.phrase || item.base || item.structure_name || 'หัวข้อ';
-            const enContent = item.Story_EN || item.example_en || item.pattern || item.phrase || item.base || '';
-            const thaiContent = item.Story_TH || item.thai || item.example_thai || '';
-            const speakText = [title, enContent, thaiContent].filter(Boolean).join(". ");
+        const data = allData[activeTab] || [];
 
-            html += `
-            <div class="card">
-                <h3>${title}
-                    <button class="speaker-btn" onclick="playVoice('${speakText.replace(/'/g, "\\'")}')">🔊</button>
-                </h3>
-                ${enContent ? `<p class="en"><strong>EN:</strong> ${enContent}</p>` : ''}
-                ${thaiContent ? `<p class="thai"><strong>TH:</strong> ${thaiContent}</p>` : ''}
-                ${item.past_simple ? `<p class="meta"><strong>Base:</strong> ${item.base||''} | <strong>Past:</strong> ${item.past_simple} | <strong>P.P.:</strong> ${item.past_participle||''}</p>` : ''}
-            </div>`;
-        });
+        data.filter(item => Object.values(item).some(v => String(v).toLowerCase().includes(q)))
+            .forEach(item => {
+                let title = item.Title_EN || item.word || item.phrase || item.base || item.structure_name || item['หัวข้อ'] || 'หัวข้อ';
+                let en = item.Story_EN || item.example_en || item.pattern || item.example || item.phrase || item.base || '';
+                let th = item.Story_TH || item.thai || item.example_thai || item['คำแปล'] || '';
 
-        container.innerHTML = html || '<p style="text-align:center; padding:60px; color:#777; font-size:18px;">ไม่พบข้อมูล กรุณาลองค้นหาใหม่</p>';
+                const speakText = [title, en, th].filter(Boolean).join(". ");
+
+                html += `
+                <div class="card">
+                    <h3 class="title">${title}
+                        <button class="speaker-btn" onclick="playVoice('${speakText.replace(/'/g, "\\'")}')">🔊</button>
+                    </h3>
+                    ${en ? `<p class="en"><strong>EN:</strong> ${en}</p>` : ''}
+                    ${th ? `<p class="thai"><strong>TH:</strong> ${th}</p>` : ''}
+                </div>`;
+            });
+
+        container.innerHTML = html || '<p style="text-align:center;padding:60px;color:#777;">ไม่พบข้อมูล กรุณาลองค้นหาใหม่</p>';
     }
 
     window.onload = init;
